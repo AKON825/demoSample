@@ -1,0 +1,7 @@
+script(src = 'http://book:4000/socket.io/socket.io.js')
+script(type = 'text/javascript').
+  //var socket = io();
+  var socket = new io.Socket();
+  //socket.connect('http://book:4000', { autoConnect: true});
+  //alert('fuck')
+  notifyAlert('There are something error');
