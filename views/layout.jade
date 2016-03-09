@@ -7,9 +7,10 @@ html(lang='en')
   head
     // jQuery from CDN
     script(src='/bower_components/jquery/jquery.min.js')
-    script(src='/javascripts/bootstrap.js')
-    script(src='/bower_components/pnotify/pnotify.buttons.js')
+    //script(src='/javascripts/bootstrap.js')
+    script(src='/bower_components/bootstrap/dist/js/bootstrap.min.js', type='text/javascript')
     script(src='/bower_components/pnotify/pnotify.core.js')
+    script(src='/bower_components/pnotify/pnotify.buttons.js')
     script(src='/javascripts/pnotify.js')
     script(src='http://book:4000/socket.io/socket.io.js')
     script(type='text/javascript').
@@ -18,7 +19,7 @@ html(lang='en')
         //var socket = new io.Socket();
         //socket.connect('http://book:4000', { autoConnect: true});
         //alert('fuck')
-        notifyAlert('There are something error');
+        //notifyAlert('There are something error');
       })
 
     meta(charset='utf-8')
@@ -27,7 +28,8 @@ html(lang='en')
     title Portfolio Theme by gsvineeth.com
     // Bootstrap + Font Awesome + Main CSS
     link(href='http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css', rel='stylesheet')
-    link(href='/css/bootstrap.css', rel='stylesheet')
+    link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap.min.css')
+    script(src='/public/bower_components/bootstrap/dist/js/bootstrap.min.js', type='text/javascript')
     // customize this file if needed
     link(href='/css/main.css', rel='stylesheet')
     // HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries
@@ -60,7 +62,9 @@ html(lang='en')
                       a(href='#') Resume
                     li
                       a(href='#') Contact
-                  ul.nav.navbar-nav.social
+                  ul.nav.navbar-nav.social.navbar-right
+                    li
+                      a.username.hide(href='#')
                     li
                       a(href='#')
                         i.fa.fa-facebook
@@ -111,3 +115,5 @@ html(lang='en')
                 a(href='#')
                   i.fa.fa-envelope
             p.credits.text-center template get from https://onepagelove.com/dribbblefolio
+
+    block script

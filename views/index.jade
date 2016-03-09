@@ -2,6 +2,40 @@ extends layout
 
 block content
   .col-lg-12
-    //h1= title
-    //p Welcome to #{title}
-    h1 AkonDemoPage(´∀｀)♡
+    form.form-inline
+      h1 垃圾話決鬥場(´∀｀)♡
+      .form-group
+        label(for='username') 輸入你的名子 &nbsp
+        input#exampleInputName2.form-control(name='username', type='text', placeholder='怎麼稱呼ㄋ?')
+      | &nbsp
+      button.btn.btn-primary(type='button') 確認
+
+block script
+  script(type='text/javascript').
+    $(function () {
+      $('.btn-primary').click(function () {
+        $.ajax({
+          url: '/api/set_username',
+          type: 'PUT',
+          data: $('form').serialize()
+        })
+        .done(function (data) {
+          if (data.result === 'error') {
+            notifyAlert(JSON.stringify(data.msg));
+          } else {
+            notifySuccess('設定成功');
+            $('.username').removeClass('hide')
+            $('.username').text(data.username)
+          }
+        })
+        .fail(function (data) {
+          notifyAlert(JSON.stringify(data));
+        });
+      })
+
+      // 避免跳頁
+      $('form').submit(function (e) {
+        e.preventDefault();
+      })
+    })
+

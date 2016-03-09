@@ -15,6 +15,37 @@ router.get('/game', function(req, res, next) {
   res.render('game', { title: 'Express' });
 });
 
+router.put('/api/set_username', function(req, res, next) {
+  req.session['user'] = {}
+  req.session.user.username = req.body.username
+
+  return res.json({username: req.body.username})
+});
+
+router.get('/st', function(req, res, next) {
+  delete req.session.user
+  req.session['user'] = {}
+  req.session.user.username = 'fuck'
+
+  return res.json({name: req.session.user.username})
+});
+
+router.get('/gt', function(req, res, next) {
+  //delete req.session.user
+  return res.json({name: req.session.user.username})
+});
+
+router.get('/add', function (req, res) {
+  if(req.session.isVisit) {
+    req.session.isVisit++;
+
+    return res.json({ya: 'the'+ req.session.isVisit+'time'})
+  } else {
+    req.session.isVisit = 1;
+
+    return res.json({ya: 'first'})
+  }
+});
 
 //var app = require('express')();
 //var http = require('http').Server(app);
