@@ -45,6 +45,8 @@ function notifySuccess(text, title) {
       sticker: false,
       closer_hover: false
     },
+    stack: stackBottomright,
+    addclass: 'stack-bottomright',
     hide: true,
     type: 'success',
     animate_speed: "normal",
@@ -57,3 +59,5 @@ function notifySuccess(text, title) {
     mouse_reset: false
   });
 };
+
+PNotify.prototype.options.styling = "bootstrap3";
