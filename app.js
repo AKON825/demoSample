@@ -33,25 +33,25 @@ app.use(cookieParser('ok'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-app.use(session({secret: '1234567890QWERTY'}));
-//app.use(session({
-//  store: new RedisStore({
-//    //host: config.redis.host,
-//    //port: config.redis.port,
-//    //db: config.redis.session.db,
-//    //ttl: config.redis.session.ttl,
-//    //prefix: config.redis.session.prefix
-//    host: '127.0.0.1',
-//    port: 6379,
-//    db: 2,
-//    ttl: 600000,
-//    prefix: 'ok'
-//  }),
-//  resave: false,
-//  saveUninitialized: true,
-//  cookie: { secure: false, maxAge :999999},
-//  secret: 'Hit_mE_aH_stUpIddd'
-//}))
+//app.use(session({secret: '1234567890QWERTY'}));
+app.use(session({
+  store: new RedisStore({
+    host: config.redis.host,
+    port: config.redis.port,
+    db: config.redis.session.db,
+    ttl: config.redis.session.ttl,
+    prefix: config.redis.session.prefix
+    //host: '127.0.0.1',
+    //port: 6379,
+    //db: 2,
+    //ttl: 600000,
+    //prefix: 'ok'
+  }),
+  resave: false,
+  saveUninitialized: true,
+  //cookie: { secure: false, maxAge :999999},
+  secret: 'Hit_mE_aH_stUpIddd'
+}))
 
 //app.use(function (req, res, next) {
 //  if (!req.session) {
