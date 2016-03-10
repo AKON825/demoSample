@@ -108,13 +108,22 @@ block script
       addAllUserToList([user])
     });
 
+    socket.on("everyoneRemoveUser", function (user) {
+      removeUserFromList(user)
+    });
+
     function addAllUserToList(result) {
       result.forEach(function (user) {
         var conversation = $('.media.conversation:first').clone()
         conversation.removeClass('hide')
+        conversation.attr('data-id', user.id)
         conversation.find('.media-body .media-heading').text(user.username)
         $('.conversation-wrap').append(conversation)
       })
+    }
+
+    function removeUserFromList(user) {
+      $('.media.conversation[data-id="'+user.id+'"]').remove()
     }
 
     $(function () {

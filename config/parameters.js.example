@@ -2,9 +2,9 @@ module.exports = {
       /* 資料庫 */
     database: {
       'host': '127.0.0.1',
-      'name': 'kiwi',
+      'name': 'adatabase',
       'user': 'root',
-      'password': 'GLNUT7FF9'
+      'password': 'pwd'
     },
 
     redis: {

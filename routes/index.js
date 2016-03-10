@@ -87,7 +87,7 @@ function router (app) {
           socket.emit("addAllOnlineUser", result);
         });
 
-        socket.broadcast.emit("everyoneAddNewUser", socket.request.session.user);
+        socket.broadcast.emit("everyoneAddNewUser", socket.request.session.user)
       })
     }
 
@@ -96,6 +96,8 @@ function router (app) {
         if (err) {
           console.log(err)
         }
+
+        socket.broadcast.emit("everyoneRemoveUser", socket.request.session.user)
       })
       console.log('user disconnected 把這個人從上線列表拿出');
     });
