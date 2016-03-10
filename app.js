@@ -7,7 +7,6 @@ var bodyParser = require('body-parser');
 var session = require('express-session')
 var RedisStore = require('connect-redis')(session)
 
-var routes = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
@@ -53,15 +52,8 @@ app.use(session({
   secret: 'Hit_mE_aH_stUpIddd'
 }))
 
-//app.use(function (req, res, next) {
-//  if (!req.session) {
-//    app.locals.user = {}
-//  }
-//  console.log(JSON.stringify(req.session))
-//  return next() // otherwise continue
-//})
+require('./routes/index')(app)
 
-app.use('/', routes);
 app.use('/users', users);
 
 // catch 404 and forward to error handler
