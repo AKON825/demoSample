@@ -33,7 +33,27 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 //app.use(session({secret: '1234567890QWERTY'}));
-app.use(session({
+//app.use(session({
+//  store: new RedisStore({
+//    host: config.redis.host,
+//    port: config.redis.port,
+//    db: config.redis.session.db,
+//    ttl: config.redis.session.ttl,
+//    prefix: config.redis.session.prefix
+//    //host: '127.0.0.1',
+//    //port: 6379,
+//    //db: 2,
+//    //ttl: 600000,
+//    //prefix: 'ok'
+//  }),
+//  resave: false,
+//  saveUninitialized: true,
+//  //cookie: { secure: false, maxAge :999999},
+//  secret: 'Hit_mE_aH_stUpIddd'
+//}))
+
+var io = require('socket.io').listen(4000);
+var sessionMiddleware = session({
   store: new RedisStore({
     host: config.redis.host,
     port: config.redis.port,
@@ -50,8 +70,15 @@ app.use(session({
   saveUninitialized: true,
   //cookie: { secure: false, maxAge :999999},
   secret: 'Hit_mE_aH_stUpIddd'
-}))
+})
 
+io.use(function(socket, next) {
+  sessionMiddleware(socket.request, socket.request.res, next);
+});
+
+app.use(sessionMiddleware);
+
+app.set('io', io)
 require('./routes/index')(app)
 
 app.use('/users', users);

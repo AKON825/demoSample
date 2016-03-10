@@ -52,30 +52,24 @@ function router (app) {
     }
   });
 
-//var app = require('express')();
-//var http = require('http').Server(app);
-//var io = require('socket.io')(http);
-  var io = require('socket.io').listen(4000);
-  var run = 0;
-  io.use(function(socket, next){
-    run++; // 0 -> 1
-    next();
-  });
-  io.use(function(socket, next) {
-    run++; // 1 -> 2
-    next();
-  });
+  //var app = require('express')();
+  //var http = require('http').Server(app);
+  //var io = require('socket.io')(http);
+  //var io = require('socket.io').listen(4000);
+  var io = app.get('io')
   io.use(function(socket, next) {
     var handshakeData = socket.request;
 
     next();
   });
   io.on('connection', function(socket){
-    console.log('跑是!!!',run)
-    console.log('a user connected');
+    console.log('a user connected 把這個人加入到上線列表');
+    console.log('視訊ㄛ', socket.request.session);
+
+     // Now it's available from Socket.IO sockets too! Win!
 
     socket.on('disconnect', function(){
-      console.log('user disconnected');
+      console.log('user disconnected 把這個人從上線列表拿出');
     });
   });
 
