@@ -6,7 +6,7 @@ doctype html
 html(lang='en')
   head
     // jQuery from CDN
-    script(src='/bower_components/jquery/jquery.min.js')
+    script(src='/bower_components/jquery/dist/jquery.min.js')
     //script(src='/javascripts/bootstrap.js')
     script(src='/bower_components/bootstrap/dist/js/bootstrap.min.js', type='text/javascript')
     script(src='/bower_components/pnotify/pnotify.core.js')
@@ -65,7 +65,7 @@ html(lang='en')
                       a(href='#') Contact
                   ul.nav.navbar-nav.social.navbar-right
                     li
-                      a.username.hide(href='#')
+                      a.username.hide.btn-lg.text-primary(href='#')
                     li
                       a(href='#')
                         i.fa.fa-facebook

@@ -60,11 +60,6 @@ var sessionMiddleware = session({
     db: config.redis.session.db,
     ttl: config.redis.session.ttl,
     prefix: config.redis.session.prefix
-    //host: '127.0.0.1',
-    //port: 6379,
-    //db: 2,
-    //ttl: 600000,
-    //prefix: 'ok'
   }),
   resave: false,
   saveUninitialized: true,

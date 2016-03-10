@@ -12,7 +12,8 @@ module.exports = {
       port: 6379,
       session: {
         db: 2,
-        ttl: 60000,
+        chat_db: 3,
+        ttl: 6000,
         prefix: 'demo_sess_'
       }
     }

@@ -5,7 +5,7 @@ block content
 
   .col-lg-12
     form.form-inline.col-lg-6.col-lg-offset-4
-      h1 垃圾話決鬥場(´∀｀)♡
+      h1 垃圾話聊天室(´∀｀)♡
       .form-group
         label(for='username') 輸入你的名子 &nbsp
         input#exampleInputName2.form-control(name='username', type='text', placeholder='怎麼稱呼ㄋ?')
@@ -35,12 +35,7 @@ block content
           .media-body
             h5.media-heading Naimish Sakhpara
             small Hello
-        .media.conversation
-          a.pull-left(href='#')
-            img.media-object(data-src='holder.js/64x64', alt='64x64', style='width: 50px; height: 50px;', src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAACqUlEQVR4Xu2Y60tiURTFl48STFJMwkQjUTDtixq+Av93P6iBJFTgg1JL8QWBGT4QfDX7gDIyNE3nEBO6D0Rh9+5z9rprr19dTa/XW2KHl4YFYAfwCHAG7HAGgkOQKcAUYAowBZgCO6wAY5AxyBhkDDIGdxgC/M8QY5AxyBhkDDIGGYM7rIAyBgeDAYrFIkajEYxGIwKBAA4PDzckpd+322243W54PJ5P5f6Omh9tqiTAfD5HNpuFVqvFyckJms0m9vf3EY/H1/u9vb0hn89jsVj8kwDfUfNviisJ8PLygru7O4TDYVgsFtDh9Xo9NBrNes9cLgeTybThgKenJ1SrVXGf1WoVDup2u4jFYhiPx1I1P7XVBxcoCVCr1UBfTqcTrVYLe3t7OD8/x/HxsdiOPqNGo9Eo0un02gHkBhJmuVzC7/fj5uYGXq8XZ2dnop5Mzf8iwMPDAxqNBmw2GxwOBx4fHzGdTpFMJkVzNB7UGAmSSqU2RoDmnETQ6XQiOyKRiHCOSk0ZEZQcUKlU8Pz8LA5vNptRr9eFCJQBFHq//szG5eWlGA1ywOnpqQhBapoWPfl+vw+fzweXyyU+U635VRGUBOh0OigUCggGg8IFK/teXV3h/v4ew+Hwj/OQU4gUq/w4ODgQrkkkEmKEVGp+tXm6XkkAOngmk4HBYBAjQA6gEKRmyOL05GnR99vbW9jtdjEGdP319bUIR8oA+pnG5OLiQoghU5OElFlKAtCGr6+vKJfLmEwm64aosd/XbDbbyIBSqSSeNKU+HXzlnFAohKOjI6maMs0rO0B20590n7IDflIzMmdhAfiNEL8R4jdC/EZIJj235R6mAFOAKcAUYApsS6LL9MEUYAowBZgCTAGZ9NyWe5gCTAGmAFOAKbAtiS7TB1Ng1ynwDkxRe58vH3FfAAAAAElFTkSuQmCC')
-          .media-body
-            h5.media-heading Naimish Sakhpara
-            small Hello
+
       .message-wrap.col-lg-7
         .msg-wrap
           .media.msg
@@ -102,34 +97,28 @@ block content
 
 block script
   script(type='text/javascript').
+    var socket = io('http://book:4000')
+    var initUserList = false
+
+    socket.on("addAllOnlineUser", function (result) {
+      addAllUserToList(result)
+    });
+
+    socket.on("everyoneAddNewUser", function (user) {
+      addAllUserToList([user])
+    });
+
+    function addAllUserToList(result) {
+      result.forEach(function (user) {
+        var conversation = $('.media.conversation:first').clone()
+        conversation.removeClass('hide')
+        conversation.find('.media-body .media-heading').text(user.username)
+        $('.conversation-wrap').append(conversation)
+      })
+    }
+
     $(function () {
       getUsername()
-      getAllUserToList()
-      var socket = io('http://book:4000');
-      function getAllUserToList() {
-        $.ajax({
-          url: '/api/allOnlineUser',
-          type: 'get'
-        })
-        .done(function (data) {
-          if (data.result === 'error') {
-            return
-          }
-
-          data.ret.forEach(function (user) {
-            var conversation = $('.media.conversation:first').clone()
-            conversation.removeClass('hide')
-
-            conversation.find('.media-body .media-heading').text(user.username)
-            $('.conversation-wrap').append(conversation)
-            //user.username
-          })
-
-        })
-        .fail(function (data) {
-          notifyAlert(JSON.stringify(data.msg));
-        });
-      }
 
       function getUsername(){
         $.ajax({
