@@ -83,11 +83,11 @@ block script
       removeUserFromList(user)
     });
 
-    socket.on('chat message', function (msg) {
+    socket.on('chat message', function (fromWho, msg) {
       var msgDiv = $('.media.msg:first').clone()
       msgDiv.removeClass('hide')
       //msg.attr('data-id', user.id)
-      msgDiv.find('.media-body .media-heading').text('幹你娘')
+      msgDiv.find('.media-body .media-heading').text(fromWho)
       msgDiv.find('.media-body .msg-content').text(msg)
       $('.msg-wrap').append(msgDiv)
     });
@@ -106,9 +106,11 @@ block script
       $('.media.conversation[data-id="'+user.id+'"]').remove()
     }
 
+    // 點選綁定要傳送的人id
     $(document).on( "click", ".media.conversation", function( e ) {
       chatToId = $(this).attr('data-id')
-      console.log('id綁定到' ,$(this).attr('data-id'))
+      $(this).addClass('bg-primary')
+      $(this).siblings('.media.conversation').removeClass('bg-primary')
     });
 
     $(function () {
@@ -135,7 +137,8 @@ block script
 
       $('textarea.send-message').keydown(function(e) {
         if (e.keyCode == 13) {
-          socket.emit('chat message', $(this).val());
+          //socket.emit('chat message', $(this).val());
+          socket.emit('chat to id', chatToId, $(this).val());
           $(this).val('')
 
           return false;

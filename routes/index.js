@@ -100,7 +100,8 @@ function router (app) {
     });
 
     socket.on('chat to id', function(id, msg){
-      io.to(id).emit('chat message', msg)
+      var fromWho = socket.request.session.user.username
+      io.to(id).emit('chat message', fromWho, msg)
     });
 
     socket.on('disconnect', function(){
