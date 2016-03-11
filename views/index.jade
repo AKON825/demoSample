@@ -67,7 +67,7 @@ block content
 
 block script
   script(type='text/javascript').
-    var socket = io('http://book:4000')
+    var socket = io()
     var initUserList = false
     var chatToId = ''
 
@@ -164,6 +164,7 @@ block script
             notifySuccess('設定成功');
             $('.username').removeClass('hide')
             $('.username').text(data.username)
+            location.reload()
           }
         })
         .fail(function (data) {

@@ -101,18 +101,22 @@ function router (app) {
 
     socket.on('chat to id', function(id, msg){
       var fromWho = socket.request.session.user.username
+      // 也發送給自己
+      socket.emit('chat message', fromWho, msg)
       io.to(id).emit('chat message', fromWho, msg)
     });
 
     socket.on('disconnect', function(){
-      delFromOnlineUser(socket.request.session, function(err){
-        if (err) {
-          console.log(err)
-        }
+      if (socket.request.session.user) {
+        delFromOnlineUser(socket.request.session, function(err){
+          if (err) {
+            console.log(err)
+          }
 
-        socket.broadcast.emit("everyoneRemoveUser", socket.request.session.user)
-      })
-      console.log('user disconnected 把這個人從上線列表拿出');
+          socket.broadcast.emit("everyoneRemoveUser", socket.request.session.user)
+          console.log('user disconnected 把這個人從上線列表拿出');
+        })
+      }
     });
   });
 
