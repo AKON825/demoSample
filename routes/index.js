@@ -29,6 +29,7 @@ function router (app) {
     req.session['user'] = {}
     req.session.user.username = req.body.username
     req.session.user.id = uuid.v1()
+    // 這裡的id其實可以考慮不要用uuid產生, 直接用redis中隊應的demo_sess就好了
 
     return res.json({result: 'ok', username: req.body.username, id: req.session.user.id})
   });
@@ -71,8 +72,8 @@ function router (app) {
   //var io = require('socket.io').listen(4000);
   var io = app.get('io')
   io.on('connection', function(socket){
-    console.log('user ' + socket.request.session.user.username + ' connected 把這個人加入到上線列表');
     if (socket.request.session.user) {
+      console.log('user ' + socket.request.session.user.username + ' connected 把這個人加入到上線列表');
       addToOnlineUser(socket.request.session, function(err){
         if (err) {
           return console.log(err)
@@ -88,8 +89,19 @@ function router (app) {
         });
 
         socket.broadcast.emit("everyoneAddNewUser", socket.request.session.user)
+
+        // 將這個人的連線指定特定的room
+        socket.join(socket.request.session.user.id)
       })
     }
+
+    socket.on('chat message', function(msg){
+      io.emit('chat message', msg);
+    });
+
+    socket.on('chat to id', function(id, msg){
+      io.to(id).emit('chat message', msg)
+    });
 
     socket.on('disconnect', function(){
       delFromOnlineUser(socket.request.session, function(err){
@@ -120,7 +132,6 @@ function router (app) {
     }
 
     function setUserHash () {
-      // 這裡的id其實可以考慮不要用uuid產生, 直接用redis中隊應的session id就好了
       redisClient.HMSET ('user:' + sessionData.user.id, 'username', sessionData.user.username, function (err, redisResult) {
         if (err) {
           return cb(err)
