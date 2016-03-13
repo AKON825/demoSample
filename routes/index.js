@@ -33,8 +33,15 @@ function router (app) {
     req.session['user'] = {}
     req.session.user.username = req.body.username
     req.session.user.id = req.body.fbId
+    req.session.user.photoUrl = req.body.photoUrl
 
     return res.json({result: 'ok', username: req.body.username, id: req.session.user.id})
+  });
+
+  app.put('/api/logout', function(req, res, next) {
+    delete req.session.user
+
+    return res.json({result: 'ok'})
   });
 
   app.get('/api/getAllLoginUser', function(req, res, next) {

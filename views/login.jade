@@ -99,22 +99,31 @@ block script
     function callFbAPI() {
       console.log('Welcome!  Fetching your information.... ');
       FB.api('/me', function (response) {
+        var responseObj = {}
         console.log('整個response', response)
         console.log('Successful login for: ' + response.name);
         document.getElementById('status').innerHTML =
                 'Thanks for logging in, ' + response.name + '!';
-        return signInChatroom(response)
+        responseObj.name = response.name
+        responseObj.id = response.id
+
+        FB.api('/' + response.id + '/picture', function (response) {
+          console.log('整個responsedddddd', JSON.stringify(response))
+
+          responseObj.photoUrl = response.data.url
+          return signInChatroom(responseObj)
+        });
       });
     }
     //Below we include the Login Button social plugin. This button uses
     //the JavaScript SDK to present a graphical Login button that triggers
     //the FB.login() function when clicked.
 
-    function signInChatroom(response){
+    function signInChatroom(responseObj){
       $.ajax({
         url: '/api/fb_login_complete',
         type: 'PUT',
-        data: {username: response.name, fbId: response.id}
+        data: {username: responseObj.name, fbId: responseObj.id, photoUrl: responseObj.photoUrl}
       })
       .done(function (data) {
         if (data.result === 'error') {
