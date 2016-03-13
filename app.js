@@ -7,8 +7,6 @@ var bodyParser = require('body-parser');
 var session = require('express-session')
 var RedisStore = require('connect-redis')(session)
 
-var users = require('./routes/users');
-
 var app = express();
 
 // 載入設定
@@ -91,8 +89,6 @@ app.all('*',  function (req, res, next) {
 
 // 放入route controller
 require('./routes/index')(app)
-app.use('/users', users);
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

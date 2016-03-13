@@ -44,11 +44,11 @@ block script
         return callFbAPI();
       } else if (response.status === 'not_authorized') {
         // The person is logged into Facebook, but not your app.
-        notifyAlert(JSON.stringify('Please log ' + 'into this app.'));
+        notifySuccess(JSON.stringify('Please log ' + 'into this app.'));
       } else {
         // The person is not logged into Facebook, so we're not sure if
         // they are logged into this app or not.
-        notifyAlert(JSON.stringify('Please log ' + 'into Facebook.'));
+        notifySuccess(JSON.stringify('Please log ' + 'into Facebook.'));
       }
     }
 
@@ -97,20 +97,14 @@ block script
     // Here we run a very simple test of the Graph API after login is
     // successful.  See statusChangeCallback() for when this call is made.
     function callFbAPI() {
-      console.log('Welcome!  Fetching your information.... ');
       FB.api('/me', function (response) {
         var responseObj = {}
-        console.log('整個response', response)
-        console.log('Successful login for: ' + response.name);
-        document.getElementById('status').innerHTML =
-                'Thanks for logging in, ' + response.name + '!';
         responseObj.name = response.name
         responseObj.id = response.id
 
         FB.api('/' + response.id + '/picture', function (response) {
-          console.log('整個responsedddddd', JSON.stringify(response))
-
           responseObj.photoUrl = response.data.url
+
           return signInChatroom(responseObj)
         });
       });
