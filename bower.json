@@ -19,6 +19,7 @@
     "summernote": "~0.6.16",
     "bootstrap-filestyle": "~1.2.1",
     "sprintf": "~1.0.3",
-    "blob": "*"
+    "blob": "*",
+    "bootstrap-social": "~4.12.0"
   }
 }

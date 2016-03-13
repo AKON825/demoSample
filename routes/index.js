@@ -25,11 +25,14 @@ function router (app) {
     }
   });
 
-  app.put('/api/username', function(req, res, next) {
+  app.get('/login', function(req, res, next) {
+    res.render('login', { title: 'Express' });
+  });
+
+  app.put('/api/fb_login_complete', function(req, res, next) {
     req.session['user'] = {}
     req.session.user.username = req.body.username
-    req.session.user.id = uuid.v1()
-    // 這裡的id其實可以考慮不要用uuid產生, 直接用redis中隊應的demo_sess就好了
+    req.session.user.id = req.body.fbId
 
     return res.json({result: 'ok', username: req.body.username, id: req.session.user.id})
   });
@@ -44,20 +47,8 @@ function router (app) {
     })
   });
 
-  app.get('/add', function (req, res) {
-    if(req.session.isVisit) {
-      req.session.isVisit++;
-
-      return res.json({ya: 'the'+ req.session.isVisit+'time'})
-    } else {
-      req.session.isVisit = 1;
-
-      return res.json({ya: 'first'})
-    }
-  });
-
   app.get('/api/allOnlineUser', function (req, res) {
-    getAllOnlineUser(function(err, result){
+    userManager.getAllOnlineUser(function(err, result){
       if (err) {
         return res.json({result: 'error', msg: err.message})
       }
@@ -74,12 +65,12 @@ function router (app) {
   io.on('connection', function(socket){
     if (socket.request.session.user) {
       console.log('user ' + socket.request.session.user.username + ' connected 把這個人加入到上線列表');
-      addToOnlineUser(socket.request.session, function(err){
+      userManager.addToOnlineUser(socket.request.session, function(err){
         if (err) {
           return console.log(err)
         }
 
-        getAllOnlineUser(function(err, result){
+        userManager.getAllOnlineUser(function(err, result){
           if (err) {
             console.log(err)
           }
@@ -108,7 +99,7 @@ function router (app) {
 
     socket.on('disconnect', function(){
       if (socket.request.session.user) {
-        delFromOnlineUser(socket.request.session, function(err){
+        userManager.delFromOnlineUser(socket.request.session, function(err){
           if (err) {
             console.log(err)
           }
@@ -119,106 +110,4 @@ function router (app) {
       }
     });
   });
-
-  var db = config.redis.session.chat_db || 3
-  var redisClient = require('redis').createClient(config.redis.port, config.redis.host)
-
-  function addToOnlineUser(sessionData, cb) {
-    return selectDatebase()
-
-    function selectDatebase () {
-      redisClient.select(db, function (err) {
-        if (err) {
-          return cb(err)
-        }
-
-        return setUserHash()
-      })
-    }
-
-    function setUserHash () {
-      redisClient.HMSET ('user:' + sessionData.user.id, 'username', sessionData.user.username, function (err, redisResult) {
-        if (err) {
-          return cb(err)
-        }
-
-        return cb()
-      })
-    }
-  }
-
-  function delFromOnlineUser(sessionData, cb) {
-    return selectDatebase()
-
-    function selectDatebase () {
-      redisClient.select(db, function (err) {
-        if (err) {
-          return cb(err)
-        }
-
-        return delUserHash()
-      })
-    }
-
-    function delUserHash () {
-      redisClient.del ('user:' + sessionData.user.id, function (err, redisResult) {
-        if (err) {
-          return cb(err)
-        }
-
-        return cb()
-      })
-    }
-  }
-
-  function getAllOnlineUser(cb) {
-    var userArray = []
-    return selectDatebase()
-
-    function selectDatebase () {
-      redisClient.select(db, function (err) {
-        if (err) {
-          return cb(err)
-        }
-
-        return getAllUserKeys()
-      })
-    }
-
-    function getAllUserKeys () {
-      redisClient.keys('user:' + '*', function (err, redisResult) {
-        if (err) {
-          return cb(err)
-        }
-
-        return allUserDataToArray(redisResult)
-      })
-    }
-
-    function allUserDataToArray (allKeys) {
-      return async.each(allKeys, function(redisKey, asyncCb) {
-        var userObj = {}
-        redisClient.hvals(redisKey, function (err, redisResult) {
-          if (err) {
-            return asyncCb(err)
-          }
-
-          var username = redisResult[0]
-          var id = redisKey.replace(/user:/g, '');
-
-          userObj.id = id
-          userObj.username = username
-          userArray.push(userObj)
-
-          return asyncCb()
-        })
-      }, function(err){
-        if (err) {
-          return cb(err)
-        }
-
-        return cb(null, userArray)
-      });
-    }
-  }
 }

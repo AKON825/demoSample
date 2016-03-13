@@ -40,6 +40,8 @@ html(lang='en')
       script(src='https://oss.maxcdn.com/respond/1.4.2/respond.min.js')
     link(type='text/css', rel='stylesheet', href='/bower_components/pnotify/pnotify.core.css')
     link(type='text/css', rel='stylesheet', href='/bower_components/pnotify/pnotify.buttons.css')
+    link(rel='stylesheet', href='/bower_components/bootstrap-social/bootstrap-social.css')
+    block css
     body
       .wrapper
         .container
@@ -65,7 +67,7 @@ html(lang='en')
                       a(href='#') Contact
                   ul.nav.navbar-nav.social.navbar-right
                     li
-                      a.username.hide.btn-lg.text-primary(href='#')
+                      a.username.hide.btn-lg.text-primary(href='#') 尚未登入
                     li
                       a(href='#')
                         i.fa.fa-facebook

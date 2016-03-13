@@ -74,6 +74,21 @@ io.use(function(socket, next) {
 app.use(sessionMiddleware);
 app.set('io', io)
 
+// 驗證登入
+app.all('*',  function (req, res, next) {
+  var url = req.path
+
+  if (url.match(/^\/login/) || url.match(/^\/api\/fb_login_complete/) || url.match(/^\/api\/logout/)) {
+    return next()
+  }
+
+  if (req.session.user && req.session.user.username && req.session.user.id) {
+    return next()
+  }
+
+  return res.redirect('/login')
+})
+
 // 放入route controller
 require('./routes/index')(app)
 app.use('/users', users);
