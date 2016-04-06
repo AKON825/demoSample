@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session')
 var RedisStore = require('connect-redis')(session)
+var cluster = require('cluster'); // Only required if you want the worker id
 
 var app = express();
 
@@ -47,17 +48,26 @@ app.set('port', port);
  * Create HTTP server.
  */
 
+  // production error handler
+// no stacktraces leaked to user
+app.use(function(req, res, next) {
+  console.log('worker: ' + cluster.worker.id);
+  return next()
+});
+
 var server = http.createServer(app);
-var io = require('socket.io')(server);
+var io = require('socket.io')();
+
+var sessionStore = new RedisStore({
+  host: config.redis.host,
+  port: config.redis.port,
+  db: config.redis.session.db,
+  ttl: config.redis.session.ttl,
+  prefix: config.redis.session.prefix
+})
 
 var sessionMiddleware = session({
-  store: new RedisStore({
-    host: config.redis.host,
-    port: config.redis.port,
-    db: config.redis.session.db,
-    ttl: config.redis.session.ttl,
-    prefix: config.redis.session.prefix
-  }),
+  store: sessionStore,
   resave: false,
   saveUninitialized: true,
   //cookie: { secure: false, maxAge :999999},
@@ -121,13 +131,23 @@ app.use(function(err, req, res, next) {
   });
 });
 
-/**
- * Listen on provided port, on all network interfaces.
- */
+io.listen(server)
 
-server.listen(port);
+var sticky = require('sticky-session');
+
+if (!sticky.listen(server, 3000)) {
+  //io.listen(server)
+
+  // Master code
+  server.once('listening', function() {
+    console.log('server started on 3000 port');
+  });
+} else {
+  // Worker code
+}
+
 server.on('error', onError);
-server.on('listening', onListening);
+//server.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
